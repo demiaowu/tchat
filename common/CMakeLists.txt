@@ -1,6 +1,6 @@
 
 set(SOURCE_FILES
-       logger.cpp logger.h)
+       logger.cpp logger.h noncopyable.h)
 
 #static library
 add_library(common_static ${SOURCE_FILES})

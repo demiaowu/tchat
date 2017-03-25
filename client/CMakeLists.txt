@@ -1,5 +1,5 @@
 set(SOURCE_FILES
-        main.cpp)
+        main.cpp chat_client.cpp chat_client.h)
 
 
 add_executable(client

@@ -6,6 +6,8 @@
 #define TCHAT_LOGGER_H
 #include <sstream>
 
+#include <noncopyable.h>
+
 namespace chat {
     namespace common {
 
@@ -20,9 +22,10 @@ namespace chat {
         private:
             friend class logger;
             std::ostringstream oss_;
-        };
+        }; //log_stream class
 
-        class logger {
+        class logger
+            : public chat::common::noncopyable{
         public:
             enum log_level {
                 TRACE = 0,
@@ -37,7 +40,7 @@ namespace chat {
             //TODO
             class source_file {
 
-            };
+            }; //source_file class
 
             logger(const char* file, int line, log_level level, const char* func);
             ~logger();
@@ -57,7 +60,7 @@ namespace chat {
         private:
             log_level level_;
             log_stream stream_;
-        };//logger class
+        }; //logger class
 
         #define LOG_TRACE if( chat::common::logger::get_log_level() <= chat::common::logger::TRACE )  \
             chat::common::logger(__FILE__, __LINE__, chat::common::logger::TRACE, __func__).stream()
@@ -74,8 +77,8 @@ namespace chat {
 
         #define LOG_FATAL chat::common::logger(__FILE__, __LINE__, logger::FATAL, __func__).stream()
 
-    }//common namespace
-}//chat namespace
+    } //common namespace
+} //chat namespace
 
 
 #endif //TCHAT_LOGGER_H

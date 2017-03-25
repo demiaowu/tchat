@@ -2,7 +2,9 @@
 set(SOURCE_FILES
         main.cpp
         logger_test.h
-        test_utils.h)
+        test_utils.h
+        chat_user_test.h
+        chat_message_test.h)
 
 
 add_executable(tests

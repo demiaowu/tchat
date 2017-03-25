@@ -1,5 +1,12 @@
 set(SOURCE_FILES
-        main.cpp)
+        main.cpp
+        chat_message.h
+        chat_user.h
+        chat_config.h
+        chat_session.h chat_session.cpp
+        chat_participant.h
+        chat_room.h chat_room.cpp
+        chat_server.h chat_server.cpp)
 
 
 
