@@ -54,6 +54,15 @@ namespace chat {
                 return MSG_HEADER_LEN;
             }
 
+            void set_body_len(size_t len) {
+                if (len >= chat::server::MAX_MSG_BODY_LEN) {
+                    body_len_ = chat::server::MAX_MSG_BODY_LEN;
+                    LOG_WARN << "chat message too long, the len is: " << len;
+                } else {
+                    body_len_ = len;
+                }
+            }
+
             bool decode_header() {
                 char header[3] = "";
                 memcpy(header, msg_, 2);
@@ -72,6 +81,12 @@ namespace chat {
                 return true;
             }
 
+            bool encode_header() {
+                _header_str header_str;
+                header_str.len_ = body_len_;
+                memcpy(msg_, header_str.str_, 2);
+            }
+
         private:
             // |    2     |    2     |   8   |   32   |   8   |   32   |  msg_content  |
             // |        header       |                        body                     |
@@ -80,6 +95,11 @@ namespace chat {
             char msg_[MSG_HEADER_LEN + MAX_MSG_BODY_LEN];
             char command_[2];
             size_t body_len_;
+
+            union _header_str {
+                unsigned short int len_;
+                char str_[2];
+            };
         }; // chat_message class
 
         using chat_message_queue = std::deque<chat_message>;

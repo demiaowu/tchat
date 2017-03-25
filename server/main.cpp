@@ -20,6 +20,8 @@ int main(int argc, char* argv[]) {
             return 1;
         }
 
+        chat::common::logger::set_log_level(chat::common::logger::TRACE);
+
         // Initialise the server.
         chat::server::chat_server s(argv[1], argv[2]);
 

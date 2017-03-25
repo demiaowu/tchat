@@ -71,11 +71,11 @@ namespace chat {
         #define LOG_INFO if( chat::common::logger::get_log_level() <= chat::common::logger::INFO ) \
             chat::common::logger(__FILE__, __LINE__, chat::common::logger::INFO, __func__).stream()
 
-        #define LOG_WARN chat::common::logger(__FILE__, __LINE__, logger::WARN, __func__).stream()
+        #define LOG_WARN chat::common::logger(__FILE__, __LINE__, chat::common::logger::WARN, __func__).stream()
 
-        #define LOG_ERROR chat::common::logger(__FILE__, __LINE__, logger::ERROR, __func__).stream()
+        #define LOG_ERROR chat::common::logger(__FILE__, __LINE__, chat::common::logger::ERROR, __func__).stream()
 
-        #define LOG_FATAL chat::common::logger(__FILE__, __LINE__, logger::FATAL, __func__).stream()
+        #define LOG_FATAL chat::common::logger(__FILE__, __LINE__, chat::common::logger::FATAL, __func__).stream()
 
     } //common namespace
 } //chat namespace

@@ -26,23 +26,17 @@ int main(int argc, char *argv[]) {
             return 1;
         }
 
-        boost::asio::io_service io_service;
+        chat_client client(argv[1], argv[2]);
 
-        boost::asio::ip::tcp::resolver resolver(io_service);
-        boost::asio::ip::tcp::resolver::query query(argv[1], argv[2]);
-        boost::asio::ip::tcp::resolver::iterator iterator = resolver.resolve(query);
-
-        chat_client client(io_service, iterator);
-
-        std::thread t(boost::bind(&boost::asio::io_service::run, &io_service));
+        std::thread t(boost::bind(&chat::client::chat_client::run, &client));
 
         char line[chat::server::MAX_MSG_BODY_LEN + 1];
         while (std::cin.getline(line, chat::server::MAX_MSG_BODY_LEN + 1))
         {
             using namespace std; // For strlen and memcpy.
             chat_message msg;
-            msg.body_length(strlen(line));
-            memcpy(msg.body(), line, msg.body_length());
+            msg.set_body_len(strlen(line));
+            memcpy(msg.get_body(), line, msg.get_body_len());
             msg.encode_header();
             client.write(msg);
         }

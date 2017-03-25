@@ -21,8 +21,8 @@ namespace chat {
             //                        std::bind(&chat_session::handle_read_header, shared_from_this().get(), boost::asio::placeholders::error));
         }
 
-        void chat_session::handle_read_header(const boost::system::error_code &error) {
-            if (!error && read_msg_.decode_header()) {
+        void chat_session::handle_read_header(const boost::system::error_code &ec) {
+            if (!ec && read_msg_.decode_header()) {
                 boost::asio::async_read(socket_,
                                         boost::asio::buffer(read_msg_.get_body(), read_msg_.get_body_len()),
                                         boost::bind(&chat_session::handle_read_body, shared_from_this(), boost::asio::placeholders::error));
@@ -31,9 +31,10 @@ namespace chat {
             }
         }
 
-        void chat_session::handle_read_body(const boost::system::error_code& error) {
-            if (!error) {
+        void chat_session::handle_read_body(const boost::system::error_code& ec) {
+            if (!ec) {
                 room_.deliver_msg(read_msg_);
+                LOG_TRACE << "receive a message :" << std::string(read_msg_.get_body(), read_msg_.get_body_len());
                 async_read(socket_,
                            boost::asio::buffer(read_msg_.get_msg(), chat_message::get_header_len()),
                            boost::bind(&chat_session::handle_read_header,
@@ -62,6 +63,7 @@ namespace chat {
 
         void chat_session::handle_write(const boost::system::error_code& error) {
             if (!error) {
+                LOG_TRACE << "write a message success :" << std::string(write_msgs_.front().get_body(), write_msgs_.front().get_body_len());
                 write_msgs_.pop_front();
                 if (!write_msgs_.empty())
                 {
