@@ -26,6 +26,8 @@ int main(int argc, char *argv[]) {
             return 1;
         }
 
+        chat::common::logger::set_log_level(chat::common::logger::TRACE);
+
         chat_client client(argv[1], argv[2]);
 
         std::thread t(boost::bind(&chat::client::chat_client::run, &client));

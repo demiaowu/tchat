@@ -87,6 +87,10 @@ namespace chat {
                 memcpy(msg_, header_str.str_, 2);
             }
 
+            std::string to_string() const{
+                return std::string(get_body(), get_body_len());
+            }
+
         private:
             // |    2     |    2     |   8   |   32   |   8   |   32   |  msg_content  |
             // |        header       |                        body                     |

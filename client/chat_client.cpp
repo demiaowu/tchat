@@ -29,14 +29,16 @@ namespace chat {
         }
 
         void chat_client::write(const chat::server::chat_message& msg) {
+            LOG_TRACE << "begin write msg :" << msg.to_string();
             io_service_.post(boost::bind(&chat_client::do_write, this, msg));
         }
 
         void chat_client::handle_connect(const boost::system::error_code &ec) {
             if (!ec) {
-                boost::asio::async_write(socket_,
-                                         boost::asio::buffer(read_msg_.get_msg(), chat::server::MSG_HEADER_LEN),
-                                         boost::bind(&chat_client::handle_read_header, this, boost::asio::placeholders::error));
+                boost::asio::async_read(socket_,
+                                        boost::asio::buffer(read_msg_.get_msg(), chat::server::MSG_HEADER_LEN),
+                                        boost::bind(&chat_client::handle_read_header, this,
+                                                    boost::asio::placeholders::error));
             } else {
                 LOG_ERROR << ec.message();
                 do_close();
