@@ -6,7 +6,7 @@ set(SOURCE_FILES
         chat_session.h chat_session.cpp
         chat_participant.h
         chat_room.h chat_room.cpp
-        chat_server.h chat_server.cpp)
+        chat_server.h chat_server.cpp chat_connection.h chat_connection.cpp chat_nickname_factory.h)
 
 
 

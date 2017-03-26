@@ -12,6 +12,7 @@
 #include <cstdio>
 
 #include "chat_config.h"
+#include "chat_nickname_factory.h"
 
 namespace chat {
     namespace server {
@@ -20,9 +21,8 @@ namespace chat {
         public:
             chat_user(const uint64_t user_id)
                     : user_id_(user_id) {
-                // Default nick_name: nick-id
-                ::memcpy(nick_name_, "nick-", 5);
-                ::snprintf(nick_name_+5, MAX_NICK_NAME_LEN-5, "%llu", user_id);
+                std::string nick_name = chat_nickname_factory::get_nick_name(user_id);
+                ::memcpy(nick_name_, nick_name.c_str(), nick_name.size());
             }
             chat_user(const uint64_t user_id, const std::string& nick_name)
                     : user_id_(user_id) {
@@ -30,7 +30,6 @@ namespace chat {
                 ::memcpy(nick_name_,
                          nick_name.c_str(),
                          nick_name_len > MAX_NICK_NAME_LEN ? MAX_NICK_NAME_LEN:nick_name_len);
-                nick_name_[nick_name_len > MAX_NICK_NAME_LEN ? MAX_NICK_NAME_LEN:nick_name_len] = '\0';
             }
 
             uint64_t get_user_id_() const {
@@ -48,10 +47,9 @@ namespace chat {
                 ::memcpy(nick_name_,
                          nick_name.c_str(),
                          nick_name_len > MAX_NICK_NAME_LEN ? MAX_NICK_NAME_LEN:nick_name_len);
-                nick_name_[nick_name_len > MAX_NICK_NAME_LEN ? MAX_NICK_NAME_LEN:nick_name_len] = '\0';
             }
 
-            std::string to_msg() {
+            const std::string to_msg() const{
                 _user_id_str user_id_str;
                 user_id_str.user_id_ = user_id_;
                 // |  id  |  nickname_ |
@@ -62,9 +60,14 @@ namespace chat {
                 return std::string(user_str);
             }
 
+
+            const std::string to_string() const {
+                return std::string(nick_name_, strlen(nick_name_));
+            }
+
         private:
             uint64_t user_id_;
-            char nick_name_[chat::server::MAX_NICK_NAME_LEN+1];    // The last char is '\0'
+            char nick_name_[chat::server::MAX_NICK_NAME_LEN] = {0};    // The last char is '\0'
 
             union _user_id_str {
                 uint64_t user_id_;
