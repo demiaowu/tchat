@@ -29,7 +29,7 @@ namespace chat {
                 const int nick_name_len = nick_name.size();
                 ::memcpy(nick_name_,
                          nick_name.c_str(),
-                         nick_name_len > MAX_NICK_NAME_LEN ? MAX_NICK_NAME_LEN:nick_name_len);
+                         nick_name_len > max_nick_name_len ? max_nick_name_len:nick_name_len);
             }
 
             uint64_t get_user_id_() const {
@@ -46,14 +46,14 @@ namespace chat {
                 const int nick_name_len = nick_name.size();
                 ::memcpy(nick_name_,
                          nick_name.c_str(),
-                         nick_name_len > MAX_NICK_NAME_LEN ? MAX_NICK_NAME_LEN:nick_name_len);
+                         nick_name_len > max_nick_name_len ? max_nick_name_len:nick_name_len);
             }
 
             const std::string to_msg() const{
                 _user_id_str user_id_str;
                 user_id_str.user_id_ = user_id_;
                 // |  id  |  nickname_ |
-                char user_str[8 + chat::server::MAX_NICK_NAME_LEN];
+                char user_str[8 + max_nick_name_len];
                 //size_t len = ;
                 memcpy(user_str, user_id_str.str_, 8);
                 memcpy(user_str+8, nick_name_, ::strlen(nick_name_));
@@ -64,15 +64,19 @@ namespace chat {
             const std::string to_string() const {
                 return std::string(nick_name_, strlen(nick_name_));
             }
-
         private:
-            uint64_t user_id_;
-            char nick_name_[chat::server::MAX_NICK_NAME_LEN] = {0};    // The last char is '\0'
-
             union _user_id_str {
                 uint64_t user_id_;
                 char str_[8];
             };
+
+            enum {
+                max_nick_name_len = chat::server::MAX_NICK_NAME_LEN
+            };
+
+        private:
+            uint64_t user_id_;
+            char nick_name_[max_nick_name_len] = {0};    // The last char is '\0'
         }; //chat_user class
 
     } // server namespace

@@ -23,6 +23,9 @@ TEST(chat_user_test, usage) {
 
     user2.set_nick_name(std::string("demiaowu123").c_str());
     EXPECT_STREQ("demiaowu123", user2.get_nick_name_());
+
+    chat_user user3(2, "12345678901234567890123456789012");
+    EXPECT_STREQ("12345678901234567890123456789012", user3.to_string().c_str());
 }
 
 #endif //TCHAT_CHAR_USER_TEST_H
