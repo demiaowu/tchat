@@ -67,9 +67,9 @@ namespace chat {
                 char header[3] = "";
                 memcpy(header, msg_, 2);
                 header[2] = '\0';
-                LOG_TRACE << "header: " << header[0] << ":" << (int)(header[0]) << "-" << header[1];
+//                LOG_TRACE << "header: " << header[0] << ":" << (int)(header[0]) << "-" << header[1];
                 body_len_ = (size_t)(header[0]) + 256*((size_t)(header[1]));
-                LOG_TRACE << "body_len_ =" << body_len_;
+//                LOG_TRACE << "body_len_ =" << body_len_;
 
                 if (body_len_ > MAX_MSG_BODY_LEN) {
                     body_len_ = 0;
@@ -106,7 +106,7 @@ namespace chat {
             };
         }; // chat_message class
 
-        using chat_message_queue = std::deque<chat_message>;
+       typedef std::deque<chat_message> chat_message_queue;
     } // server namespace
 } // chat namespace
 

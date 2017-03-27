@@ -2,7 +2,9 @@
 // Created by demiaowu on 2017/3/25.
 //
 #include <boost/bind.hpp>
+
 #include "chat_server.h"
+
 #include "logger.h"
 
 namespace chat {
@@ -12,8 +14,10 @@ namespace chat {
             : io_service_(),
               signals_(io_service_),
               acceptor_(io_service_),
-              room_(),
-              new_session_() {
+              conncetion_manager_(),
+              room_manager_(conncetion_manager_),
+              new_session_()
+              {
 
             signals_.add(SIGINT);
             signals_.add(SIGTERM);
@@ -41,17 +45,17 @@ namespace chat {
         }
 
         void chat_server::start_accept() {
-            new_session_.reset(new chat_session(io_service_, room_));
-            acceptor_.async_accept(new_session_->get_socket(),
+            new_session_.reset(new chat_session(room_manager_, io_service_));
+            acceptor_.async_accept(new_session_->get_connection()->get_socket(),
                                    boost::bind(&chat_server::handle_accept, this, boost::asio::placeholders::error));
         }
 
         void chat_server::handle_accept(const boost::system::error_code &ec) {
             if (!ec) {
-                LOG_INFO << new_session_->get_socket().local_endpoint().address().to_string() \
-                         << " : " \
-                         <<  new_session_->get_socket().local_endpoint().port();
-                new_session_->start();
+                LOG_INFO << "accept from:" << new_session_->get_connection()->get_socket().remote_endpoint().address().to_string() \
+                         << ":" \
+                         <<  new_session_->get_connection()->get_socket().remote_endpoint().port();
+                room_manager_.start(new_session_);
             }
             start_accept();
         }

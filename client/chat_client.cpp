@@ -14,7 +14,13 @@ namespace chat {
 
         chat::client::chat_client::chat_client(const std::string &address, const std::string &port)
             : io_service_(),
+              signals_(io_service_),
               socket_(io_service_) {
+            signals_.add(SIGINT);
+            signals_.add(SIGTERM);
+            signals_.async_wait(std::bind(&chat_client::handle_stop, this));
+
+
             boost::asio::ip::tcp::resolver resolver(io_service_);
             boost::asio::ip::tcp::resolver::query query(address, port);
             boost::asio::ip::tcp::resolver::iterator iterator = resolver.resolve(query);
@@ -105,6 +111,11 @@ namespace chat {
                 LOG_ERROR << ec.message();
                 do_close();
             }
+        }
+
+        void chat_client::handle_stop() {
+            LOG_INFO << "client handle_stop";
+            io_service_.stop();
         }
 
 

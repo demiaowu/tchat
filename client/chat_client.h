@@ -31,9 +31,11 @@ namespace chat {
             void handle_write(const boost::system::error_code& ec);
             void handle_read_header(const boost::system::error_code& ec);
             void handle_read_body(const boost::system::error_code &ec);
+            void handle_stop();
 
             boost::asio::io_service io_service_;
             boost::asio::ip::tcp::socket socket_;
+            boost::asio::signal_set signals_;
             chat::server::chat_message read_msg_;
             enum { max_message_queue_size = 64 };
             chat::server::chat_message_queue write_msgs_;

@@ -1,3 +1,4 @@
+set(CMAKE_CXX_STANDARD 14)
 
 set(SOURCE_FILES
        logger.cpp logger.h noncopyable.h)
