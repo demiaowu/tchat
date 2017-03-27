@@ -13,7 +13,7 @@ namespace chat {
             virtual ~noncopyable() = default;
 
         protected:
-            noncopybale(const noncopyable &) = delete;
+            noncopyable(const noncopyable &) = delete;
             const noncopyable &operator=(const noncopyable &) = delete;
         }; // noncopyable class
 

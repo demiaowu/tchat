@@ -9,22 +9,18 @@
 
 #include "chat_participant.h"
 #include "chat_connection.h"
-#include "chat_room_manager.h"
-#include "chat_room.h"
-
 
 
 namespace chat {
     namespace server {
         using namespace boost::asio;
 
+        class chat_room_manager;
+
         class chat_session
             : public chat_participant {
         public:
-            chat_session(chat::server::chat_room_manager& room_manager, io_service& io)
-                    : room_manager_(room_manager) {
-                connection_.reset(new chat_connection(room_manager_, io));
-            }
+            chat_session(chat::server::chat_room_manager& room_manager, io_service& io);
 
             void start();
 
@@ -37,7 +33,7 @@ namespace chat {
 
         private:
             chat_room_manager& room_manager_;
-            chat::server::chat_connection_ptr connection_;
+            chat_connection_ptr connection_;
         }; // chat_message class
 
         typedef std::shared_ptr<chat_session> chat_session_ptr;

@@ -6,23 +6,22 @@
 #define TCHAT_CHAT_SESSION_MANAGER_H
 #include <set>
 
-#include "chat_manager.h"
+
 #include "chat_participant.h"
-#include "chat_room.h"
-#include "chat_session.h"
-#include "chat_connection_manager.h"
 #include "noncopyable.h"
+#include "chat_manager.h"
 
 namespace chat {
     namespace server {
 
-        class chat_room_manager
-                : public chat::common::noncopyable{
-        public:
-            chat_room_manager(chat_connection_manager& connection_manager)
-                    : connection_manager_(connection_manager) {
+        class chat_connection_manager;
+        class chat_message;
 
-            }
+        class chat_room_manager
+                : public chat_manager,
+                  public chat::common::noncopyable{
+        public:
+            chat_room_manager(chat_connection_manager& connection_manager);
 
             void start(chat_participant_ptr session);
 

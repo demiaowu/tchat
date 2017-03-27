@@ -4,9 +4,16 @@
 #include <boost/bind.hpp>
 
 #include "chat_connection.h"
+#include "chat_manager.h"
+
 
 namespace chat {
     namespace server {
+
+        chat_connection::chat_connection(chat_manager& manager, io_service& io)
+            : manager_(manager),
+              socket_(io) {
+        }
 
         //TODO using the std::bind will occur compile error.
         void chat_connection::start() {
@@ -25,14 +32,13 @@ namespace chat {
                                         boost::asio::buffer(read_msg_.get_body(), read_msg_.get_body_len()),
                                         boost::bind(&chat_connection::handle_read_body, shared_from_this(), boost::asio::placeholders::error));
             } else {
-//                room_.leave(shared_from_this());
+                manager_.stop(shared_from_this());
             }
         }
 
         void chat_connection::handle_read_body(const boost::system::error_code& ec) {
             if (!ec) {
-//                room_.deliver_msg(read_msg_);
-                room_manager_.deliver_msg(read_msg_);
+                manager_.deliver_msg(read_msg_);
                 LOG_TRACE << "receive a message :" << std::string(read_msg_.get_body(), read_msg_.get_body_len());
                 async_read(socket_,
                            boost::asio::buffer(read_msg_.get_msg(), chat_message::get_header_len()),
@@ -41,7 +47,7 @@ namespace chat {
                                        boost::asio::placeholders::error));
             }
             else {
-//                room_.leave(shared_from_this());
+                manager_.stop(shared_from_this());
             }
         }
 
@@ -73,7 +79,7 @@ namespace chat {
                 }
             }
             else {
-//                room_.leave(shared_from_this());
+                manager_.stop(shared_from_this());
             }
         }
 

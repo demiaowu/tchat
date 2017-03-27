@@ -52,9 +52,9 @@ namespace chat {
 
         void chat_server::handle_accept(const boost::system::error_code &ec) {
             if (!ec) {
-                LOG_INFO << new_session_->get_connection()->get_socket().local_endpoint().address().to_string() \
-                         << " : " \
-                         <<  new_session_->get_connection()->get_socket().local_endpoint().port();
+                LOG_INFO << "accept from:" << new_session_->get_connection()->get_socket().remote_endpoint().address().to_string() \
+                         << ":" \
+                         <<  new_session_->get_connection()->get_socket().remote_endpoint().port();
                 room_manager_.start(new_session_);
             }
             start_accept();

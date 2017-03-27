@@ -5,7 +5,6 @@
 #ifndef TCHAT_CHAT_SERVER_H
 #define TCHAT_CHAT_SERVER_H
 #include "noncopyable.h"
-#include "chat_manager.h"
 #include "chat_connection_manager.h"
 #include "chat_room_manager.h"
 #include "chat_session.h"

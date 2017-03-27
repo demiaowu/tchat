@@ -4,6 +4,7 @@
 
 #include "chat_connection_manager.h"
 #include "chat_connection.h"
+#include "chat_message.h"
 
 
 namespace chat {
@@ -25,6 +26,10 @@ namespace chat {
                 (dynamic_cast<chat_connection*>(iter->get()))->stop();
             }
             connections_.clear();
+        }
+
+        void chat_connection_manager::deliver_msg(const chat_message &msg) {
+
         }
     } // server namespace
 } // chat namespace

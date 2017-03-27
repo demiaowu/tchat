@@ -28,7 +28,7 @@ namespace chat {
             // Default nick_name: nick-id
             char nick_name[chat::server::MAX_NICK_NAME_LEN+1];
             ::memcpy(nick_name, "nick-", 5);
-            ::snprintf(nick_name + 5, chat::server::MAX_NICK_NAME_LEN-5, "%llu", user_id);
+            ::snprintf(nick_name + 5, chat::server::MAX_NICK_NAME_LEN-5, "%lu", user_id);
 
             return std::string(nick_name);
         }

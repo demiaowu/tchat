@@ -3,7 +3,8 @@ project(tchat)
 
 set(CMAKE_CXX_STANDARD 14)
 
-set(GOOGLETEST_DIR F:/Libs/cygwin/googletest)
+set(GOOGLETEST_DIR /home/demiaowu/gtest/googletest/googletest)
+set(BOOST_DIR /usr/local)
 
 
 include_directories(
@@ -12,12 +13,12 @@ include_directories(
         ${PROJECT_SOURCE_DIR}/common
         ${PROJECT_SOURCE_DIR}/tests
 
-        C:/cygwin64/usr/include
+        ${BOOST_DIR}/include
         ${GOOGLETEST_DIR}/include)
 
 link_directories(
-        C:/cygwin64/lib
-        ${GOOGLETEST_DIR}/libs)
+        ${BOOST_DIR}/lib
+        ${GOOGLETEST_DIR}/lib)
 
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)

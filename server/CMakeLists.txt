@@ -10,7 +10,7 @@ set(SOURCE_FILES
         chat_connection.h chat_connection.cpp
         chat_nickname_factory.h
         chat_connection_manager.cpp chat_connection_manager.h
-        # chat_manager.h
+        chat_manager.h
         chat_room_manager.h chat_room_manager.cpp)
 
 

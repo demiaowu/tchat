@@ -7,6 +7,7 @@
 
 #include "chat_participant.h"
 
+
 namespace chat {
     namespace server {
 
@@ -17,10 +18,7 @@ namespace chat {
         class chat_manager
                 : public chat_participant{
         public:
-            chat_manager() = default;
-//            chat_manager(chat_manager_ptr chat_manager_ptr) {
-//
-//            }
+
             virtual void start(chat_participant_ptr) = 0;
             virtual void stop(chat_participant_ptr) = 0;
             virtual void stop_all() = 0;

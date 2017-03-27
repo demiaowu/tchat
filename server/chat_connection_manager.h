@@ -7,21 +7,25 @@
 #include <set>
 
 #include "noncopyable.h"
-#include "chat_manager.h"
 #include "chat_participant.h"
+#include "chat_manager.h"
 
 namespace chat {
     namespace server {
 
+        class chat_message;
+
         class chat_connection_manager
-//                : public chat_manager,
-                  : public chat::common::noncopyable{
+                  : public chat_manager,
+                    public chat::common::noncopyable{
         public:
             void start(chat_participant_ptr con);
 
             void stop(chat_participant_ptr con);
 
             void stop_all();
+
+            void deliver_msg(const chat_message& msg);
 
         private:
             std::set<chat_participant_ptr> connections_;
