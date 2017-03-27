@@ -8,21 +8,25 @@
 #include <set>
 
 #include "chat_participant.h"
+#include "chat_message.h"
+
+#include "chat_room_manager.h"
 
 namespace chat {
     namespace server {
 
         class chat_room {
         public:
+            chat_room(chat_room_manager& room_manager);
+
             void join(chat_participant_ptr participant);
             void leave(chat_participant_ptr participant);
 
             void deliver_msg(const chat_message& msg);
 
         private:
-            std::set<chat_participant_ptr> participants_;
-            enum { max_recent_msgs = 64 };
-            chat_message_queue recent_msgs_;
+            chat_room_manager& room_manager_
+
         }; //chat_room class
 
 

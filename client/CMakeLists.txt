@@ -1,3 +1,5 @@
+set(CMAKE_CXX_STANDARD 14)
+
 set(SOURCE_FILES
         main.cpp chat_client.cpp chat_client.h)
 

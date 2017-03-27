@@ -106,7 +106,7 @@ namespace chat {
             };
         }; // chat_message class
 
-        using chat_message_queue = std::deque<chat_message>;
+       typedef std::deque<chat_message> chat_message_queue;
     } // server namespace
 } // chat namespace
 

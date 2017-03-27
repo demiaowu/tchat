@@ -32,6 +32,7 @@ namespace chat {
         void chat_connection::handle_read_body(const boost::system::error_code& ec) {
             if (!ec) {
 //                room_.deliver_msg(read_msg_);
+                room_manager_.deliver_msg(read_msg_);
                 LOG_TRACE << "receive a message :" << std::string(read_msg_.get_body(), read_msg_.get_body_len());
                 async_read(socket_,
                            boost::asio::buffer(read_msg_.get_msg(), chat_message::get_header_len()),
@@ -44,7 +45,7 @@ namespace chat {
             }
         }
 
-        void chat_connection::deliver_msg(const chat_message& msg) {
+        void chat_connection::deliver_msg(const chat_message& msg){
             size_t len =  write_msgs_.size();
 
             if (len < chat_connection::max_message_queue_size) {
@@ -74,6 +75,10 @@ namespace chat {
             else {
 //                room_.leave(shared_from_this());
             }
+        }
+
+        void chat_connection::stop() {
+            socket_.close();
         }
 
     } // server namespace

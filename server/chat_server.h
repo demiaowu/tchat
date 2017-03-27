@@ -4,8 +4,11 @@
 
 #ifndef TCHAT_CHAT_SERVER_H
 #define TCHAT_CHAT_SERVER_H
-#include "chat_session.h"
 #include "noncopyable.h"
+#include "chat_manager.h"
+#include "chat_connection_manager.h"
+#include "chat_room_manager.h"
+#include "chat_session.h"
 
 namespace chat {
     namespace server {
@@ -26,13 +29,10 @@ namespace chat {
             void handle_accept(const boost::system::error_code& ec);
 
             boost::asio::io_service io_service_;
-
             boost::asio::signal_set signals_;
-
             boost::asio::ip::tcp::acceptor acceptor_;
-
-            chat_room room_;
-
+            chat_connection_manager conncetion_manager_;
+            chat_room_manager room_manager_;
             chat_session_ptr new_session_;
         }; //chat_server class
 
