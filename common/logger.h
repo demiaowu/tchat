@@ -37,7 +37,7 @@ namespace chat {
                 NUM_LOG_LEVELS,
             };
 
-            //TODO
+            //TODO support the log scrolling
             class source_file {
 
             }; //source_file class

@@ -14,9 +14,7 @@ namespace chat {
             : io_service_(),
               signals_(io_service_),
               acceptor_(io_service_),
-              conncetion_manager_(),
-              room_manager_(conncetion_manager_),
-              new_session_()
+              conncetion_manager_()
               {
 
             signals_.add(SIGINT);
@@ -45,20 +43,48 @@ namespace chat {
         }
 
         void chat_server::start_accept() {
-            new_session_.reset(new chat_session(room_manager_, io_service_));
-            acceptor_.async_accept(new_session_->get_connection()->get_socket(),
+            new_socket_.reset(new chat_socket(*this, io_service_));
+            acceptor_.async_accept(new_socket_->get_socket(),
                                    boost::bind(&chat_server::handle_accept, this, boost::asio::placeholders::error));
         }
 
         void chat_server::handle_accept(const boost::system::error_code &ec) {
             if (!ec) {
-                LOG_INFO << "accept from:" << new_session_->get_connection()->get_socket().remote_endpoint().address().to_string() \
+                LOG_INFO << "accept from:" << new_socket_.get()->get_socket().remote_endpoint().address().to_string() \
                          << ":" \
-                         <<  new_session_->get_connection()->get_socket().remote_endpoint().port();
-                room_manager_.start(new_session_);
+                         <<  new_socket_.get()->get_socket().remote_endpoint().port();
+                start(new_socket_);
             }
             start_accept();
         }
+
+        void chat_server::start(chat_socket_ptr socket) {
+            sockets_.insert(socket);
+            socket->start();
+        }
+
+        uint64_t chat_server::get_new_room_id() {
+            uint64_t room_id = 0;
+            while (room_id ++) {
+                if (room_ids.end() == room_ids.find(room_id)) {
+                    room_ids[room_id] = true;
+                    break;
+                }
+            };
+
+            return room_id;
+        }
+
+        void chat_server::create_room(const std::string room_name, boost::asio::ip::tcp::socket& socket) {
+            chat_room_ptr room = std::make_shared<chat_room>(get_new_room_id(), room_name, conncetion_manager_);
+            chat_session_ptr session = std::make_shared<chat_session>(*room.get(), room->get_session_manager(),socket.get_io_service());
+//            session->get_connection()->get_socket() = socket;
+            boost::asio::ip::tcp::socket& sock = session->get_connection()->get_socket();
+            session->get_connection()->get_socket().assign(socket.remote_endpoint().protocol(), socket.native());
+            rooms_.insert(room);
+            room->start(session);
+        }
+
     } // server namespace
 } // chat namespace
 

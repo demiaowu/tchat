@@ -5,13 +5,15 @@
 
 #include "chat_connection.h"
 #include "chat_manager.h"
+#include "chat_room.h"
 
 
 namespace chat {
     namespace server {
 
-        chat_connection::chat_connection(chat_manager& manager, io_service& io)
-            : manager_(manager),
+        chat_connection::chat_connection(chat_room& room, chat_session* session, io_service& io)
+            : room_(room),
+              session_(session),
               socket_(io) {
         }
 
@@ -32,13 +34,14 @@ namespace chat {
                                         boost::asio::buffer(read_msg_.get_body(), read_msg_.get_body_len()),
                                         boost::bind(&chat_connection::handle_read_body, shared_from_this(), boost::asio::placeholders::error));
             } else {
-                manager_.stop(shared_from_this());
+                LOG_ERROR << "read header failed";
+                room_.get_session_manager().stop(shared_from_this());
             }
         }
 
         void chat_connection::handle_read_body(const boost::system::error_code& ec) {
             if (!ec) {
-                manager_.deliver_msg(read_msg_);
+                room_.get_session_manager().deliver_msg(read_msg_);
                 LOG_TRACE << "receive a message :" << std::string(read_msg_.get_body(), read_msg_.get_body_len());
                 async_read(socket_,
                            boost::asio::buffer(read_msg_.get_msg(), chat_message::get_header_len()),
@@ -47,7 +50,8 @@ namespace chat {
                                        boost::asio::placeholders::error));
             }
             else {
-                manager_.stop(shared_from_this());
+                //TODO bug fix: the shared_from_this is chat_connection, but the parameter of stop is chat_session
+                room_.get_session_manager().stop(shared_from_this());
             }
         }
 
@@ -79,12 +83,17 @@ namespace chat {
                 }
             }
             else {
-                manager_.stop(shared_from_this());
+                LOG_ERROR <<"write failed";
+                room_.get_session_manager().stop(shared_from_this());
             }
         }
 
         void chat_connection::stop() {
             socket_.close();
+        }
+
+        chat_session *chat_connection::get_chat_session() {
+            return session_;
         }
 
     } // server namespace

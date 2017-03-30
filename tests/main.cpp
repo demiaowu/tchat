@@ -7,6 +7,9 @@
 #include "chat_user_test.h"
 #include "chat_message_test.h"
 #include "cpp_test.h"
+#include "asio_test.h"
+#include "boost_test.h"
+
 
 int main(int argc, char* argv[]) {
     logger::set_log_level(logger::TRACE);

@@ -3,3 +3,10 @@
 //
 
 #include "chat_timeout_manager.h"
+
+namespace chat {
+    namespace server {
+
+
+    } // server namespace
+} // chat namespace

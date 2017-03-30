@@ -5,13 +5,18 @@ set(SOURCE_FILES
         chat_config.h
         chat_session.h chat_session.cpp
         chat_participant.h
-        #chat_room.h chat_room.cpp
+        chat_room.h chat_room.cpp
         chat_server.h chat_server.cpp
         chat_connection.h chat_connection.cpp
         chat_nickname_factory.h
         chat_connection_manager.cpp chat_connection_manager.h
         chat_manager.h
-        chat_room_manager.h chat_room_manager.cpp)
+        chat_session_manager.h chat_session_manager.cpp
+        #chat_time_wheel.cpp chat_time_wheel.h
+        chat_user.cpp
+        chat_socket.cpp chat_socket.h
+        #chat_timeout_manager.cpp chat_timeout_manager.h
+        )
 
 
 
@@ -29,3 +34,5 @@ target_link_libraries(server
         # wsock32
         # ws2_32
         )
+
+add_library(server_static ${SOURCE_FILES})

@@ -15,25 +15,32 @@ namespace chat {
     namespace server {
         using namespace boost::asio;
 
-        class chat_room_manager;
+        class chat_session_manager;
+        class room_;
 
         class chat_session
             : public chat_participant {
         public:
-            chat_session(chat::server::chat_room_manager& room_manager, io_service& io);
+            chat_session(chat_room& room, chat_session_manager& session_manager, io_service& io);
 
             void start();
+            void stop();
 
             virtual void deliver_msg(const chat_message& msg);
 
+            uint64_t get_session_id() const {
+                return session_id_;
+            }
 
             chat_connection_ptr get_connection() {
                 return connection_;
             }
 
         private:
-            chat_room_manager& room_manager_;
+            chat_room& room_;
+            chat_session_manager& session_manager_;
             chat_connection_ptr connection_;
+            uint64_t  session_id_;
         }; // chat_message class
 
         typedef std::shared_ptr<chat_session> chat_session_ptr;

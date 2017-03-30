@@ -12,15 +12,16 @@ namespace chat {
     namespace server {
 
         class chat_manager;
+        class chat_message;
 
         using chat_manager_ptr = std::shared_ptr<chat_manager>;
 
-        class chat_manager
-                : public chat_participant{
+        class chat_manager {
         public:
 
             virtual void start(chat_participant_ptr) = 0;
             virtual void stop(chat_participant_ptr) = 0;
+            virtual void deliver_msg(const chat_message& msg) = 0;
             virtual void stop_all() = 0;
         };
 

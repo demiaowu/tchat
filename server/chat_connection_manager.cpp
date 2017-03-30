@@ -13,17 +13,17 @@ namespace chat {
 
         void chat_connection_manager::start(chat_participant_ptr con) {
             connections_.insert(con);
-            (dynamic_cast<chat_connection*>(con.get()))->start();
+            con->start();
         }
 
         void chat_connection_manager::stop(chat_participant_ptr con) {
+            con->stop();
             connections_.erase(con);
-            (dynamic_cast<chat_connection*>(con.get()))->stop();
         }
 
         void chat_connection_manager::stop_all() {
             for(auto iter=connections_.begin(); iter!=connections_.end(); ++iter) {
-                (dynamic_cast<chat_connection*>(iter->get()))->stop();
+                iter->get()->stop();
             }
             connections_.clear();
         }

@@ -14,6 +14,8 @@ namespace chat {
 
         class chat_participant {
         public:
+            virtual void start() = 0;
+            virtual void stop() = 0;
             virtual void deliver_msg(const chat_message& msg) = 0;
         };
 

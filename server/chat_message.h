@@ -42,6 +42,10 @@ namespace chat {
                 return msg_ + MSG_HEADER_LEN;
             }
 
+            const char* get_command() {
+                return command_;
+            }
+
             size_t get_body_len() const {
                 return body_len_;
             }
@@ -64,19 +68,19 @@ namespace chat {
             }
 
             bool decode_header() {
-                char header[3] = "";
-                memcpy(header, msg_, 2);
-                header[2] = '\0';
-//                LOG_TRACE << "header: " << header[0] << ":" << (int)(header[0]) << "-" << header[1];
+                char header[5] = "";
+                memcpy(header, msg_, 4);
+                LOG_TRACE << "header: " << (int)header[0] << "-" << (int)header[1] << "-" << header[2] << "-" << header[3];
                 body_len_ = (size_t)(header[0]) + 256*((size_t)(header[1]));
-//                LOG_TRACE << "body_len_ =" << body_len_;
+                LOG_TRACE << "body_len_ =" << body_len_;
 
                 if (body_len_ > MAX_MSG_BODY_LEN) {
                     body_len_ = 0;
                     return false;
                 }
 
-                memcpy(command_, msg_+2, 2);
+                command_[0] = msg_[2];
+                command_[1] = msg_[3];
 
                 return true;
             }
@@ -87,8 +91,21 @@ namespace chat {
                 memcpy(msg_, header_str.str_, 2);
             }
 
-            std::string to_string() const{
-                return std::string(get_body(), get_body_len());
+            bool encode(char* body, char *cmd, size_t body_len) {
+                LOG_TRACE << body << "-" << cmd << "-" << body_len;
+                _header_str header_str;
+                header_str.len_ = body_len;
+                memcpy(msg_, header_str.str_, 2);
+
+                msg_[2] = cmd[0];
+                msg_[3] = cmd[1];
+
+                memcpy(msg_ + 4, body, body_len);
+                LOG_TRACE << "send message :" << get_body();
+            }
+
+            std::string to_string() const {
+                return std::string(get_body());
             }
 
         private:
@@ -96,8 +113,8 @@ namespace chat {
             // |        header       |                        body                     |
             // |        header       |      from      |      to        |  msg_content  |
             // | body_len | command  |   id  |   name |   id  |   name |  msg_content  |
-            char msg_[MSG_HEADER_LEN + MAX_MSG_BODY_LEN];
-            char command_[2];
+            char msg_[MSG_HEADER_LEN + MAX_MSG_BODY_LEN] = {0};
+            char command_[2] = {0};
             size_t body_len_;
 
             union _header_str {

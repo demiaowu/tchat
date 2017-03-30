@@ -11,3 +11,6 @@ target_link_libraries(client
         common_static
         boost_system
         pthread)
+
+
+add_library(client_static ${SOURCE_FILES})

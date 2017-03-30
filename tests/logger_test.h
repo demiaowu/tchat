@@ -32,25 +32,4 @@ TEST(logger_test, usage) {
 }
 
 
-//void test_logger() {
-//    std::cout << logger::get_log_level() << " " << logger::get_log_level_name() << std::endl;
-//
-//    LOG_TRACE << "trace";
-//    LOG_DEBUG << "debug";
-//    LOG_INFO << "ceshi";
-//    LOG_WARN << "warn";
-//    LOG_ERROR << "error";
-//    // LOG_FATAL << "fatal";
-//
-//    logger::set_log_level(logger::TRACE);
-//    std::cout << logger::get_log_level() << " " << logger::get_log_level_name() << std::endl;
-//    LOG_TRACE << "trace";
-//    LOG_DEBUG << "debug";
-//    LOG_INFO << "ceshi";
-//    LOG_WARN << "warn";
-//    LOG_ERROR << "error";
-//    // LOG_FATAL << "fatal";
-//}
-
-
 #endif //TCHAT_LOGGER_TEST_H

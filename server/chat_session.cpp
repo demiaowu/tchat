@@ -5,16 +5,18 @@
 
 #include "chat_session.h"
 #include "chat_connection_manager.h"
-#include "chat_room_manager.h"
+#include "chat_session_manager.h"
 
 
 
 namespace chat {
     namespace server {
 
-        chat_session::chat_session(chat::server::chat_room_manager& room_manager, io_service& io)
-            : room_manager_(room_manager) {
-                connection_.reset(new chat_connection(room_manager_, io));
+        chat_session::chat_session(chat_room& room, chat_session_manager& session_manager, io_service& io)
+            : room_(room),
+              session_manager_(session_manager) {
+                connection_.reset(new chat_connection(*session_manager.get_room(), this, io));
+            session_id_ = connection_.get()->get_socket().native();
         }
 
 
@@ -23,7 +25,11 @@ namespace chat {
         }
 
         void chat_session::start() {
-            room_manager_.get_connection_manager().start(connection_);
+            session_manager_.get_connection_manager().start(connection_);
+        }
+
+        void chat_session::stop() {
+            session_manager_.get_connection_manager().stop(connection_);
         }
 
 

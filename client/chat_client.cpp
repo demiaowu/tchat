@@ -66,7 +66,9 @@ namespace chat {
         }
 
         void chat_client::handle_write(const boost::system::error_code &ec) {
+
             if (!ec) {
+                LOG_TRACE << "write msg success:" << write_msgs_.front().get_body();
                 write_msgs_.pop_front();
                 if (!write_msgs_.empty()) {
                     boost::asio::async_write(socket_,
@@ -85,6 +87,7 @@ namespace chat {
 
         void chat_client::do_close() {
             socket_.close();
+            // exit(-1) ??????????
         }
 
         void chat_client::handle_read_header(const boost::system::error_code &ec) {
@@ -115,6 +118,7 @@ namespace chat {
 
         void chat_client::handle_stop() {
             LOG_INFO << "client handle_stop";
+            socket_.close();
             io_service_.stop();
         }
 

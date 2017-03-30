@@ -21,13 +21,14 @@ namespace chat {
 
         using namespace boost::asio;
 
-        class chat_manager;
+        class chat_room;
+        class chat_session;
 
         class chat_connection
             : public chat_participant,
               public std::enable_shared_from_this<chat_connection> {
         public:
-            chat_connection(chat_manager& room_manager, io_service& io);
+            chat_connection(chat_room& room, chat_session* session, io_service& io);
 
             void start();
             void stop();
@@ -38,6 +39,8 @@ namespace chat {
             void deliver_msg(const chat_message& msg);
             void handle_write(const boost::system::error_code& error);
 
+            chat_session* get_chat_session();
+
             boost::asio::ip::tcp::socket& get_socket() {
                 return socket_;
             }
@@ -45,9 +48,11 @@ namespace chat {
 //            friend class chat_session;
 
         private:
-            chat_manager& manager_;
+            chat_session* session_;
+            chat_room& room_;
             boost::asio::ip::tcp::socket socket_;
             chat_message read_msg_;
+
             enum { max_message_queue_size =  chat::server::MAX_CONNECTION_MESSAGE_QUEUE_SIZE };
             chat_message_queue write_msgs_;
         }; // chat_message class
