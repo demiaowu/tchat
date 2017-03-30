@@ -16,12 +16,13 @@ namespace chat {
 
         class chat_connection_manager;
         class chat_message;
+        class chat_room;
 
-        class chat_room_manager
+        class chat_session_manager
                 : public chat_manager,
                   public chat::common::noncopyable{
         public:
-            chat_room_manager(chat_connection_manager& connection_manager);
+            chat_session_manager(chat_room* room, chat_connection_manager& connection_manager);
 
             void start(chat_participant_ptr session);
 
@@ -31,12 +32,10 @@ namespace chat {
             void stop_all();
 
             chat_connection_manager& get_connection_manager();
-
-            void join(chat_participant_ptr participant);
-            void leave(chat_participant_ptr participant);
-
+            chat_room* get_room();
 
         private:
+            chat_room* room_;
             chat_connection_manager& connection_manager_;
             std::set<chat_participant_ptr> sessions_;
         };
