@@ -14,12 +14,12 @@ namespace chat {
         chat_connection::chat_connection(chat_room& room, chat_session* session, io_service& io)
             : room_(room),
               session_(session),
-              socket_(io) {
+              socket_(std::make_shared<boost::asio::ip::tcp::socket>(io)) {
         }
 
         //TODO using the std::bind will occur compile error.
         void chat_connection::start() {
-            socket_.async_read_some(boost::asio::buffer(read_msg_.get_msg(), chat_message::get_header_len()),
+            socket_->async_read_some(boost::asio::buffer(read_msg_.get_msg(), read_msg_.get_header_len()),
                                     boost::bind(&chat_connection::handle_read_header,
                                                 shared_from_this(),
                                                 boost::asio::placeholders::error));
@@ -30,11 +30,11 @@ namespace chat {
 
         void chat_connection::handle_read_header(const boost::system::error_code &ec) {
             if (!ec && read_msg_.decode_header()) {
-                boost::asio::async_read(socket_,
+                boost::asio::async_read(*socket_,
                                         boost::asio::buffer(read_msg_.get_body(), read_msg_.get_body_len()),
                                         boost::bind(&chat_connection::handle_read_body, shared_from_this(), boost::asio::placeholders::error));
             } else {
-                LOG_ERROR << "read header failed";
+                LOG_ERROR << "read header failed" << ec.message();
                 room_.get_session_manager().stop(shared_from_this());
             }
         }
@@ -43,8 +43,8 @@ namespace chat {
             if (!ec) {
                 room_.get_session_manager().deliver_msg(read_msg_);
                 LOG_TRACE << "receive a message :" << std::string(read_msg_.get_body(), read_msg_.get_body_len());
-                async_read(socket_,
-                           boost::asio::buffer(read_msg_.get_msg(), chat_message::get_header_len()),
+                async_read(*socket_,
+                           boost::asio::buffer(read_msg_.get_msg(), read_msg_.get_header_len()),
                            boost::bind(&chat_connection::handle_read_header,
                                        shared_from_this(),
                                        boost::asio::placeholders::error));
@@ -64,7 +64,7 @@ namespace chat {
 
             bool write_in_progress = ! (len == 0);
             if (!write_in_progress) {   // Not write, thus write this message now
-                boost::asio::async_write(socket_,
+                boost::asio::async_write(*socket_,
                                          boost::asio::buffer(write_msgs_.front().get_msg(), write_msgs_.front().get_msg_len()),
                                          boost::bind(&chat_connection::handle_write, shared_from_this(), boost::asio::placeholders::error));
             }
@@ -76,7 +76,7 @@ namespace chat {
                 write_msgs_.pop_front();
                 if (!write_msgs_.empty())
                 {
-                    boost::asio::async_write(socket_,
+                    boost::asio::async_write(*socket_,
                                              boost::asio::buffer(write_msgs_.front().get_msg(), write_msgs_.front().get_msg_len()),
                                              boost::bind(&chat_connection::handle_write, shared_from_this(),
                                                          boost::asio::placeholders::error));
@@ -89,7 +89,7 @@ namespace chat {
         }
 
         void chat_connection::stop() {
-            socket_.close();
+            socket_->close();
         }
 
         chat_session *chat_connection::get_chat_session() {

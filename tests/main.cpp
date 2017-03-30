@@ -9,6 +9,7 @@
 #include "cpp_test.h"
 #include "asio_test.h"
 #include "boost_test.h"
+#include "rapidjson_test.h"
 
 
 int main(int argc, char* argv[]) {

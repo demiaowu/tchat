@@ -16,7 +16,7 @@ namespace chat {
             : room_(room),
               session_manager_(session_manager) {
                 connection_.reset(new chat_connection(*session_manager.get_room(), this, io));
-            session_id_ = connection_.get()->get_socket().native();
+            session_id_ = connection_.get()->get_socket()->native();
         }
 
 

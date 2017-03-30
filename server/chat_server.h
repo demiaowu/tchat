@@ -36,7 +36,7 @@ namespace chat {
             void start(chat_socket_ptr socket);
 
             uint64_t get_new_room_id();
-            void create_room(const std::string room_name, boost::asio::ip::tcp::socket& socket);
+            void create_room(const std::string room_name, std::shared_ptr<boost::asio::ip::tcp::socket> socket);
 
             friend class chat_socket;
 

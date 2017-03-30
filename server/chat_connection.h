@@ -41,16 +41,18 @@ namespace chat {
 
             chat_session* get_chat_session();
 
-            boost::asio::ip::tcp::socket& get_socket() {
+            std::shared_ptr<boost::asio::ip::tcp::socket> get_socket() {
                 return socket_;
             }
 
 //            friend class chat_session;
+        friend class chat_server;
 
         private:
             chat_session* session_;
             chat_room& room_;
-            boost::asio::ip::tcp::socket socket_;
+            // The boost::asio::ip::tcp::socket have no copy constrcutor, so the best choise is shared_ptr
+            std::shared_ptr<boost::asio::ip::tcp::socket> socket_;
             chat_message read_msg_;
 
             enum { max_message_queue_size =  chat::server::MAX_CONNECTION_MESSAGE_QUEUE_SIZE };

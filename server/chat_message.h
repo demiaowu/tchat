@@ -22,10 +22,6 @@ namespace chat {
 
             }
 
-            const char* get_msg() const {
-                return msg_;
-            }
-
             char* get_msg() {
                 return msg_;
             }
@@ -36,10 +32,6 @@ namespace chat {
 
             size_t get_msg_len() const {
                 return MSG_HEADER_LEN + body_len_;
-            }
-
-            const char* get_body() const {
-                return msg_ + MSG_HEADER_LEN;
             }
 
             const char* get_command() {
@@ -54,7 +46,7 @@ namespace chat {
                 return msg_ + MSG_HEADER_LEN;
             }
 
-            static size_t get_header_len() {
+            size_t get_header_len() {
                 return MSG_HEADER_LEN;
             }
 
@@ -70,7 +62,7 @@ namespace chat {
             bool decode_header() {
                 char header[5] = "";
                 memcpy(header, msg_, 4);
-                LOG_TRACE << "header: " << (int)header[0] << "-" << (int)header[1] << "-" << header[2] << "-" << header[3];
+                LOG_TRACE << "+" <<(int)header[0] << ":" << (int)header[1] << ":"<< header[2] << ":" << header[3] << "+";
                 body_len_ = (size_t)(header[0]) + 256*((size_t)(header[1]));
                 LOG_TRACE << "body_len_ =" << body_len_;
 
@@ -96,15 +88,19 @@ namespace chat {
                 _header_str header_str;
                 header_str.len_ = body_len;
                 memcpy(msg_, header_str.str_, 2);
+                body_len_ = body_len;
 
                 msg_[2] = cmd[0];
                 msg_[3] = cmd[1];
+
+                command_[0] = cmd[0];
+                command_[1] = cmd[1];
 
                 memcpy(msg_ + 4, body, body_len);
                 LOG_TRACE << "send message :" << get_body();
             }
 
-            std::string to_string() const {
+            std::string to_string() {
                 return std::string(get_body());
             }
 

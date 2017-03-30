@@ -32,7 +32,7 @@ namespace chat {
             void handle_write(const boost::system::error_code& error);
 
 
-            boost::asio::ip::tcp::socket& get_socket() {
+            std::shared_ptr<boost::asio::ip::tcp::socket> get_socket() {
                 return socket_;
             }
 
@@ -40,7 +40,7 @@ namespace chat {
 
         private:
             chat_server& server_;
-            boost::asio::ip::tcp::socket socket_;
+            std::shared_ptr<boost::asio::ip::tcp::socket> socket_;
             chat_message read_msg_;
 
             enum { max_message_queue_size =  chat::server::MAX_CONNECTION_MESSAGE_QUEUE_SIZE };

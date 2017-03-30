@@ -35,7 +35,6 @@ namespace chat {
         }
 
         void chat_client::write(const chat::server::chat_message& msg) {
-            LOG_TRACE << "begin write msg :" << msg.to_string();
             io_service_.post(boost::bind(&chat_client::do_write, this, msg));
         }
 

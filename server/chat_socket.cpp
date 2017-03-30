@@ -12,32 +12,34 @@ namespace chat {
     namespace server {
 
         chat_socket::chat_socket(chat_server& server, io_service& io)
-                : server_(server),
-                  socket_(io) {
+                : server_(server){
+            socket_.reset(new boost::asio::ip::tcp::socket(io));
         }
 
         //TODO using the std::bind will occur compile error.
         void chat_socket::start() {
-            socket_.async_read_some(boost::asio::buffer(read_msg_.get_msg(), read_msg_.get_header_len()),
+            socket_->async_read_some(boost::asio::buffer(read_msg_.get_msg(), read_msg_.get_header_len()),
                                     boost::bind(&chat_socket::handle_read_header,
                                                 shared_from_this(),
                                                 boost::asio::placeholders::error));
-            //boost::asio::async_read(socket_,
-            //                        boost::asio::buffer(read_msg_.get_msg(), chat_message::get_header_len()),
-            //                        std::bind(&chat_session::handle_read_header, shared_from_this().get(), boost::asio::placeholders::error));
         }
 
         void chat_socket::handle_read_header(const boost::system::error_code &ec) {
             LOG_TRACE << ":" << (int)read_msg_.get_msg()[0]  << "-" << (int)read_msg_.get_msg()[1] << "-" << read_msg_.get_msg()[2] << "-" << read_msg_.get_msg()[3];
 
             if (!ec && read_msg_.decode_header()) {
+                LOG_TRACE << "接收到的消息是:" << read_msg_.get_body_len() <<  read_msg_.get_body();
+                socket_->async_read_some(boost::asio::buffer(read_msg_.get_body(), read_msg_.get_body_len()),
+                                        boost::bind(&chat_socket::handle_read_body,
+                                                    shared_from_this(),
+                                                    boost::asio::placeholders::error));
                 switch (read_msg_.get_command()[0]) {
                     case 'c':
                         LOG_TRACE << "创建room.";
 
                         break;
                     case 's':
-                        LOG_TRACE << "接收到的消息是:" << read_msg_.get_body_len() <<  read_msg_.get_body();
+                        LOG_TRACE << "接收到的消息length:" << read_msg_.get_body_len();
                         break;
                     case 'l':
                         LOG_TRACE << "列举所有room";
@@ -54,11 +56,6 @@ namespace chat {
                     default:
                         break;
                 }
-
-                socket_.async_read_some(boost::asio::buffer(read_msg_.get_body(), read_msg_.get_body_len()),
-                                        boost::bind(&chat_socket::handle_read_body,
-                                                    shared_from_this(),
-                                                    boost::asio::placeholders::error));
             } else {
                 LOG_ERROR << "read header failed" << ec.message();
                 stop();
@@ -75,6 +72,10 @@ namespace chat {
                         break;
                     case 's':
                         LOG_TRACE << "接收到的消息是:" << read_msg_.get_body_len() <<  read_msg_.get_body();
+                        socket_->async_read_some(boost::asio::buffer(read_msg_.get_msg(), read_msg_.get_header_len()),
+                                                boost::bind(&chat_socket::handle_read_header,
+                                                            shared_from_this(),
+                                                            boost::asio::placeholders::error));
                         break;
                     case 'l':
                         LOG_TRACE << "列举所有room";
@@ -89,10 +90,7 @@ namespace chat {
                         LOG_TRACE << "退出";
                         break;
                 }
-                socket_.async_read_some(boost::asio::buffer(read_msg_.get_msg(), read_msg_.get_header_len()),
-                           boost::bind(&chat_socket::handle_read_header,
-                                       shared_from_this(),
-                                       boost::asio::placeholders::error));
+
             }
             else {
                 LOG_ERROR << "read body error" << ec.message();
@@ -109,7 +107,7 @@ namespace chat {
 
             bool write_in_progress = ! (len == 0);
             if (!write_in_progress) {   // Not write, thus write this message now
-                boost::asio::async_write(socket_,
+                boost::asio::async_write(*socket_,
                                          boost::asio::buffer(write_msgs_.front().get_msg(), write_msgs_.front().get_msg_len()),
                                          boost::bind(&chat_socket::handle_write, shared_from_this(), boost::asio::placeholders::error));
             }
@@ -119,7 +117,7 @@ namespace chat {
             if (!error) {
                 write_msgs_.pop_front();
                 if (!write_msgs_.empty()) {
-                    boost::asio::async_write(socket_,
+                    boost::asio::async_write(*socket_,
                                              boost::asio::buffer(write_msgs_.front().get_msg(), write_msgs_.front().get_msg_len()),
                                              boost::bind(&chat_socket::handle_write, shared_from_this(),
                                                          boost::asio::placeholders::error));
@@ -132,7 +130,7 @@ namespace chat {
         }
 
         void chat_socket::stop() {
-            socket_.close();
+            socket_->close();
         }
 
 
