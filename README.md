@@ -56,9 +56,8 @@ Users can build and run the unit tests on their platform/compiler.
 
 This simple example as follows.
 
-## TODO
-
-Current version only implement the basic commutation, much more works will be done in future.
+## Note
+Current version only implement the basic commutation, much more works will be done in future. Todo list:
 * support timeout management
 * supoort cpp11/14
 * optimize interactive processes
