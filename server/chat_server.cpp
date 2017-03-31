@@ -1,6 +1,8 @@
 //
 // Created by demiaowu on 2017/3/25.
 //
+#include <cstdlib>
+
 #include <boost/bind.hpp>
 
 #include "chat_server.h"
@@ -64,14 +66,15 @@ namespace chat {
         }
 
         uint64_t chat_server::get_new_room_id() {
-            uint64_t room_id = 0;
-            while (room_id ++) {
-                if (room_ids.end() == room_ids.find(room_id)) {
-                    room_ids[room_id] = true;
+            uint64_t room_id = 1;
+            while (room_id) {
+                if (room_ids_.end() == room_ids_.find(room_id)) {
+                    room_ids_.insert(room_id);
                     break;
                 }
+                ++ room_id;
             };
-
+            LOG_TRACE << "generate a new room id: " << room_id;
             return room_id;
         }
 
@@ -82,6 +85,27 @@ namespace chat {
             session->get_connection()->socket_ = socket;
             LOG_TRACE << "after pass, native socket is:" << session->get_connection()->get_socket()->native();
             rooms_.insert(room);
+            room->start(session);
+        }
+
+        void chat_server::join_room(const std::string room_id, std::shared_ptr<boost::asio::ip::tcp::socket> socket) {
+            uint64_t id = atoi(room_id.c_str());
+            LOG_TRACE << "join room id:" << id;
+            chat_room_ptr room;
+            for (auto iter=rooms_.begin(); iter != rooms_.end(); ++ iter) {
+                if (id == iter->get()->get_room_id()) {
+                    room = *iter;
+                }
+            }
+            if (room->get_room_id() != id) {
+                LOG_INFO << "the room " << id << "which you want to join is not exist.";
+                //TODO send to message to client
+            }
+
+            chat_session_ptr session = std::make_shared<chat_session>(*room.get(), room->get_session_manager(),socket->get_io_service());
+            LOG_TRACE << "native socket is:" << socket->native();
+            session->get_connection()->socket_ = socket;
+            LOG_TRACE << "after pass, native socket is:" << session->get_connection()->get_socket()->native();
             room->start(session);
         }
 

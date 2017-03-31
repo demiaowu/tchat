@@ -83,7 +83,7 @@ namespace chat {
                 memcpy(msg_, header_str.str_, 2);
             }
 
-            bool encode(char* body, char *cmd, size_t body_len) {
+            bool encode(const char* body, const char *cmd, size_t body_len) {
                 LOG_TRACE << body << "-" << cmd << "-" << body_len;
                 _header_str header_str;
                 header_str.len_ = body_len;

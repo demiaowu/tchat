@@ -9,7 +9,8 @@ namespace chat {
     namespace server {
 
         chat_room::chat_room(chat_connection_manager& connection_manager)
-            : session_manager_(this, connection_manager) {
+            : session_manager_(this, connection_manager) ,
+              room_id_(0){
 
         }
 

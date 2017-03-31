@@ -6,6 +6,7 @@
 
 #include "chat_socket.h"
 #include "chat_server.h"
+#include "chat_rapidjson.h"
 #include "logger.h"
 
 namespace chat {
@@ -79,9 +80,20 @@ namespace chat {
                         break;
                     case 'l':
                         LOG_TRACE << "列举所有room";
+                        {
+                            std::string json_rooms = rooms_to_string(server_.rooms_);
+                            chat_message msg;
+                            msg.encode(json_rooms.c_str(), "l\0", json_rooms.size());
+                            deliver_msg(msg);
+                            socket_->async_read_some(boost::asio::buffer(read_msg_.get_msg(), read_msg_.get_header_len()),
+                                                     boost::bind(&chat_socket::handle_read_header,
+                                                                 shared_from_this(),
+                                                                 boost::asio::placeholders::error));
+                        }
                         break;
                     case 'j':
                         LOG_TRACE << "加入某个room";
+                        server_.join_room(read_msg_.get_body(), socket_);
                         break;
                     case 'm':
                         LOG_TRACE << "切换到某个room";

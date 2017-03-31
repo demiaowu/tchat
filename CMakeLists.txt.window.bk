@@ -13,7 +13,8 @@ include_directories(
         ${PROJECT_SOURCE_DIR}/tests
 
         C:/cygwin64/usr/include
-        ${GOOGLETEST_DIR}/include)
+        ${GOOGLETEST_DIR}/include
+        F:/Libs/cygwin/rapidjson/include)
 
 link_directories(
         C:/cygwin64/lib

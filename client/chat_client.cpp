@@ -2,10 +2,13 @@
 // Created by demiaowu on 2017/3/25.
 //
 #include <iostream>
+#include <list>
 
 #include <boost/bind.hpp>
 
 #include "chat_client.h"
+#include "chat_rapidjson.h"
+#include "chat_room_demo.h"
 #include "logger.h"
 
 namespace chat {
@@ -15,7 +18,8 @@ namespace chat {
         chat::client::chat_client::chat_client(const std::string &address, const std::string &port)
             : io_service_(),
               signals_(io_service_),
-              socket_(io_service_) {
+              socket_(io_service_),
+              enter_room_(false){
             signals_.add(SIGINT);
             signals_.add(SIGTERM);
             signals_.async_wait(std::bind(&chat_client::handle_stop, this));
@@ -103,8 +107,26 @@ namespace chat {
 
         void chat_client::handle_read_body(const boost::system::error_code& ec) {
             if (!ec) {
-                std::cout.write(read_msg_.get_body(), read_msg_.get_body_len());
-                std::cout << "\n";
+
+                switch (read_msg_.get_command()[0]) {
+                    case 'l':
+                        {
+                            std::list<chat::server::chat_room_demo> room_list = chat::server::string_to_rooms(read_msg_.get_body());
+                            std::cout << "\nRoom list:" << std::endl;
+                            for (auto iter=room_list.begin(); iter != room_list.end(); ++iter) {
+                                std::cout << "  " << iter->get_room_id() << ":" << iter->get_room_name() << std::endl;
+                            }
+                            std::cout<<std::endl;
+                        }
+                        break;
+                    case 'j':
+                        LOG_TRACE << "加入room";
+                        break;
+                    default:
+                        std::cout.write(read_msg_.get_body(), read_msg_.get_body_len());
+                        std::cout << "\n";
+                        break;
+                }
                 boost::asio::async_read(socket_,
                                         boost::asio::buffer(read_msg_.get_msg(), chat::server::MSG_HEADER_LEN),
                                         boost::bind(&chat_client::handle_read_header, this, boost::asio::placeholders::error));
@@ -119,6 +141,14 @@ namespace chat {
             LOG_INFO << "client handle_stop";
             socket_.close();
             io_service_.stop();
+        }
+
+        bool chat_client::get_enter_room_flag() const {
+            return enter_room_;
+        }
+
+        void chat_client::set_enter_room_flag(bool enter_room_flag) {
+            enter_room_ = enter_room_flag;
         }
 
 

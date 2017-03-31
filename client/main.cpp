@@ -19,7 +19,7 @@ using namespace chat::client;
 
 using namespace std;
 
-bool decode_comand(char* line, size_t& body_pos, char *cmd) {
+bool decode_comand(char* line, size_t& body_pos, char *cmd, bool enter_room) {
     int n = 0;
     int len = strlen(line);
     while (n < len && line[n] == ' ') {
@@ -44,18 +44,34 @@ bool decode_comand(char* line, size_t& body_pos, char *cmd) {
         switch (line[n ++ ]) {
             case 's':
                 LOG_TRACE << "发送消息";
+                if (!enter_room) {
+                    return false;
+                }
                 break;
             case 'l':
                 LOG_TRACE << "列举所有room";
+                if (enter_room) {
+                    return false;
+                }
+
                 break;
             case 'j':
                 LOG_TRACE << "加入某个room";
+                if (enter_room) {
+                    return false;
+                }
                 break;
             case 'c':
-                LOG_TRACE << "切换到某个room";
+                LOG_TRACE << "加入某个room";
+                if (enter_room) {
+                    return false;
+                }
                 break;
             case 'e':
                 LOG_TRACE << "退出";
+                if (!enter_room) {
+                    exit(0);    // 没有进入room的情况下，退出，就是直接退出client
+                }
                 break;
             default:
                 return false;
@@ -94,8 +110,22 @@ int main(int argc, char *argv[]) {
         {
             size_t body_pos;
             char cmd[2] = {0};
-            if (decode_comand(line, body_pos, cmd)) {
+            if (decode_comand(line, body_pos, cmd, client.get_enter_room_flag())) {
                 LOG_TRACE << line << "-" << cmd << "-" << body_pos;
+
+                switch (cmd[0]) {
+
+                    case 'j':
+                        client.set_enter_room_flag(true);
+                        break;
+                    case 'c':
+                        client.set_enter_room_flag(true);
+                        break;
+                    default:
+                        ;
+                        break;
+                }
+
                 chat_message msg;
                 msg.encode(line+body_pos, cmd, strlen(line+body_pos));
                 LOG_TRACE << msg.to_string();
@@ -103,7 +133,8 @@ int main(int argc, char *argv[]) {
             } else {
                 std::cerr << "Enter error." << std::endl;
                 std::cerr << "Enter should be format as follows:" << std::endl;
-                std::cerr << "chat -l/-j/-c/-e [msg body]" << std::endl;
+                std::cerr << "if in a room: chat -s/-e [msg body]" << std::endl;
+                std::cerr << "if not in a room: chat -l/-j/-e [msg body]" << std::endl;
             }
             memset(line, 0, chat::server::MAX_MSG_BODY_LEN + 1);
         }

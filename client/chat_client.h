@@ -23,6 +23,9 @@ namespace chat {
             void close();
             void write(const chat::server::chat_message& msg);
 
+            bool get_enter_room_flag() const;
+            void set_enter_room_flag(bool enter_room_flag);
+
         private:
             void do_write(const chat::server::chat_message& msg);
             void do_close();
@@ -39,6 +42,8 @@ namespace chat {
             chat::server::chat_message read_msg_;
             enum { max_message_queue_size = 64 };
             chat::server::chat_message_queue write_msgs_;
+
+            bool enter_room_;
         }; //chat_client
 
     } // client namespace

@@ -23,9 +23,6 @@ namespace chat {
                                     boost::bind(&chat_connection::handle_read_header,
                                                 shared_from_this(),
                                                 boost::asio::placeholders::error));
-            //boost::asio::async_read(socket_,
-            //                        boost::asio::buffer(read_msg_.get_msg(), chat_message::get_header_len()),
-            //                        std::bind(&chat_session::handle_read_header, shared_from_this().get(), boost::asio::placeholders::error));
         }
 
         void chat_connection::handle_read_header(const boost::system::error_code &ec) {

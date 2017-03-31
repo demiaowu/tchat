@@ -36,6 +36,14 @@ namespace chat {
                 return session_manager_;
             }
 
+            uint64_t get_room_id() const{
+                return room_id_;
+            }
+
+            const char* get_room_name() const {
+                return room_name_;
+            }
+
             void join(boost::asio::ip::tcp::socket& socket);
 
         private:
@@ -47,7 +55,7 @@ namespace chat {
             chat_session_manager session_manager_;
             std::map<uint64_t, chat_user_ptr> users_;
             char room_name_[max_room_name_len] = {0};
-            uint64_t room_id_;
+            uint64_t room_id_ = 0;
         }; //chat_room class
 
         using chat_room_ptr = std::shared_ptr<chat_room>;

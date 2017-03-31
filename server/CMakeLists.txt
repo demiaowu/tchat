@@ -16,7 +16,8 @@ set(SOURCE_FILES
         chat_user.cpp
         chat_socket.cpp chat_socket.h
         #chat_timeout_manager.cpp chat_timeout_manager.h
-        )
+        chat_room_demo.h
+        chat_rapidjson.h chat_rapidjson.cpp)
 
 
 
