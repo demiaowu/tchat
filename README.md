@@ -16,9 +16,9 @@ Copyright (C) 2017 BSD 3-Clause Limited, Demiao Wu(@demiaowu@163.com). All right
 | :---------------: | :-----------------: |
 | ![lin-badge]      |   ![lin-badge]      |
 
-[lin-badge]: https://travis-ci.org/miloyip/rapidjson.png?branch=master "Travis build status"
+[lin-badge]: https://travis-ci.org/miloyip/rapidjson.png?branch=master 
 [lin-link]:  https://github.com/demiaowu/tchat 
-[win-badge]: https://ci.appveyor.com/api/projects/status/u658dcuwxo14a8m9/branch/master "AppVeyor build status"
+[win-badge]: https://ci.appveyor.com/api/projects/status/u658dcuwxo14a8m9/branch/master 
 [cyg-link]:  https://github.com/demiaowu/tchat 
 
 
@@ -68,7 +68,7 @@ to send message. It can be received by all of the room members. `chat -e` exit c
 
 ## Notes
 
-Current version only implement the basic commutation, much more ==bugs== and works will be done in future.  The _TODO_ lists as follows:
+Current version only implement the basic commutation, much more **bugs** and works will be done in future.  The _TODO_ lists as follows:
 
 * many command have not been implemented
 * timeout management
